@@ -41,6 +41,9 @@ play.prototype = {
 		// Explosion
 	    this.explosion = this.game.add.emitter(0, 0, 50)
 	    this.explosion.makeParticles('pixel')
+	    this.explosion.alpha = 0.8
+	    this.explosion.minParticleScale = 0.1
+	    this.explosion.maxParticleScale = 0.8
 	    this.explosion.setYSpeed(-150, 150)
 		this.explosion.setXSpeed(-150, 150)
 	    this.explosion.gravity = 0
@@ -85,6 +88,7 @@ play.prototype = {
 		this.bonusTime = 0
 		this.bonusType = 1
 		this.nextBonus = 1
+		this.lives = 3
 		this.bulletTime = this.game.time.now + 5000
 		this.spawnEnemyTime = this.game.time.now + 2000
 		score = 0
@@ -102,7 +106,7 @@ play.prototype = {
 
 		// Collision
 		this.game.physics.arcade.overlap(this.player, this.powerups, this.takePowerup, null, this)
-		this.game.physics.arcade.overlap(this.player, this.enemies, this.killPlayer, null, this)
+		this.game.physics.arcade.overlap(this.player, this.enemies, this.hitPlayer, null, this)
 		this.game.physics.arcade.overlap(this.player, this.enemy_bullets, this.hitPlayer, null, this)
 		this.game.physics.arcade.overlap(this.enemies, this.player_bullets, this.hitEnemy, null, this)
 
@@ -172,9 +176,34 @@ play.prototype = {
 
 	},
 
-	hitPlayer:function()
-	{
+	hitPlayer: function(player, enemy) {
+		enemy.kill()
+		
+		this.lives -= 1
+		// this.livesLabel.text = this.lives
+		// this.bonus = 5
 
+		if (this.lives == 0) 
+		{
+			this.player.alive = false
+			// Explosion and kill player
+			this.explosion.x = this.player.x
+			this.explosion.y = this.player.y-this.player.height/2
+			this.explosion.start(true, 1200, null, 50) // this.explosion.start(explode, lifespan, frequency, quantity, forceQuantity)
+			this.game.add.tween(this.explosion).to({alpha:0}, 1200).start()
+			this.player.kill()
+
+			this.game.time.events.add(1500, function(){
+				// this.music.stop()
+				this.game.state.start('gameOver')
+			}, this)
+		}
+
+		this.game.stage.backgroundColor = '#fff'
+
+		this.game.time.events.add(50, function(){
+			this.game.stage.backgroundColor = BG_COLOR
+		}, this)
 	},
 
 
