@@ -15,7 +15,7 @@ preload.prototype = {
 		this.load.image('pixel', 'images/pixel.png')
 		this.load.image('pause', 'images/pause.png')
 		this.load.image('player_bullet', 'images/bullet.png')
-		this.load.image('player', 'images/player_x1.png')
+		this.load.image('player', 'images/player.png')
 		this.load.image('powerup', 'images/powerup_small.png')
 		this.load.image('enemy_bullet', 'images/bullet_green_medium.png')
 		this.load.spritesheet('enemy1', 'images/alien_1_8x7_big.png',40,35)

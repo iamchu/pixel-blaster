@@ -7,8 +7,8 @@ play.prototype = {
 	create:function()
 	{	
 
-		var w = this.game.width
-		var h = this.game.height
+		w = this.game.width
+		h = this.game.height
 
 		this.cursor = this.game.input.keyboard.createCursorKeys()
 		this.physics.startSystem(Phaser.Physics.ARCADE)
@@ -81,12 +81,12 @@ play.prototype = {
 		// this.music.play('', 0, 0.5, true)
 
 		// Init vars
-		this.enemyTime = this.game.time.now + 2000
 		this.fireTime = 0
 		this.bonusTime = 0
 		this.bonusType = 1
-		this.bulletTime = this.game.time.now + 5000
 		this.nextBonus = 1
+		this.bulletTime = this.game.time.now + 5000
+		this.spawnEnemyTime = this.game.time.now + 2000
 		score = 0
 
 		// Support for mouse click and touchscreen input
@@ -107,6 +107,13 @@ play.prototype = {
 		this.game.physics.arcade.overlap(this.enemies, this.player_bullets, this.hitEnemy, null, this)
 
 		this.move()
+
+		// Spawn enemy
+	   	if (this.game.time.now > this.spawnEnemyTime) 
+	   	{
+			this.spawnEnemyTime = this.game.time.now + 1000
+	        this.newEnemy()
+	    }
 	},
 
 	takePowerup:function()
@@ -132,7 +139,32 @@ play.prototype = {
 
 	newEnemy:function()
 	{
+		var enemyType = random(2)
+		if(enemyType == 0){
+			var img = 'enemy1'
+			var hp = 200
+			var speed = 200
+		}
+		else if(enemyType == 1){
+			var img = 'enemy2'
+			var hp = 300
+			var speed = 300
+		}
+		else if(enemyType == 2){
+			var img = 'enemy3'
+			var hp = 400
+			var speed = 350
+		}
 
+		var enemy = this.enemies.create(random(w - 30), 0, img)
+		this.game.physics.arcade.enable(enemy)
+ 		enemy.checkWorldBounds = true
+	    enemy.outOfBoundsKill = true
+	    enemy.anchor.setTo(0.5, 0.5)
+	    enemy.body.velocity.y = speed
+	    enemy.hp = hp
+	    enemy.animations.add('move', [0, 1], 4, true)
+	    enemy.animations.play('move')
 	},
 
 	hitEnemy:function()
