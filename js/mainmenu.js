@@ -22,6 +22,20 @@ mainMenu.prototype = {
 		this.game.add.tween(label).delay(500).to({ alpha: 1}, 1000).start()
 		this.game.add.tween(label).to({y: h-120}, 500).to({y: h-100}, 500).loop().start()
 
+		// Stars
+		var emitter = this.game.add.emitter(this.game.world.centerX, 0, 200)
+		emitter.alpha = 0.8
+		emitter.width = this.game.world.width
+		emitter.makeParticles('star')
+		emitter.minParticleScale = 0.1
+		emitter.maxParticleScale = 0.7
+		emitter.setYSpeed(100, 300)
+		emitter.setXSpeed(0, 0)
+		emitter.minRotation = 0
+		emitter.maxRotation = 0
+		emitter.start(false, 7000, 100, 0)
+		emitter.gravity = 0
+
 		// touch input
 		this.game.input.onDown.add( listener, this)
 
