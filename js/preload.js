@@ -11,11 +11,15 @@ preload.prototype = {
 		loading.anchor.setTo(.5,.5)
 		this.load.setPreloadSprite(loading)
 		
-		// game entities/world
-		this.load.image('player', 'images/player_x1.png')
-		this.load.image('obstacle', 'images/platform_thin_x7.png')
+		this.load.image('star', 'images/star.png')
 		this.load.image('pause', 'images/pause.png')
-		this.load.image('bg', 'images/cream.png')
+		this.load.image('bullet', 'images/bullet.png')
+		this.load.image('player', 'images/player_x1.png')
+		this.load.image('powerup', 'images/powerup_small.png')
+		this.load.image('enemyBullet', 'images/bullet_green_medium.png')
+		this.load.spritesheet('enemy1', 'images/alien_1_8x7_big.png',40,35)
+		this.load.spritesheet('enemy2', 'images/alien_2_10x9_big.png',50,45)
+		this.load.spritesheet('enemy3', 'images/alien_3_12x10_big.png',60,50)
 
 		// audio
 		// this.load.audio('bg_spin', 'sounds/spin_bg_music.mp3')

@@ -6,17 +6,11 @@ var play = function(){}
 play.prototype = {
 	create:function()
 	{	
-		// Game width and height for convenience
-		w = this.game.width
-		h = this.game.height
-		score = 0
-		// Bg color
-		this.game.stage.backgroundColor = BG_COLOR
-		// Bg image
-		this.bg = this.game.add.image(0,0,'bg')
 
-		// Platform width
-		platform_width = this.game.cache.getImage('obstacle').width
+		var w = this.game.width
+		var h = this.game.height
+
+		score = 0
 
 		// Score sound
 		// this.sound.score = this.game.add.audio('score')
@@ -29,23 +23,36 @@ play.prototype = {
 		// this.music = this.game.add.sound('music')
 		// this.music.play('', 0, 0.5, true)
 
-
 		this.physics.startSystem(Phaser.Physics.ARCADE)
 
 		// Obstacles
 		this.obstacles = this.game.add.group()
 		
 		// Player
-		this.player = this.game.add.sprite(this.game.width/2, 250, 'player')
+		this.player = this.game.add.sprite(this.game.width/2, h-40, 'player')
 		this.game.physics.enable(this.player, Phaser.Physics.ARCADE)
 		this.player.enableBody = true
 		this.player.body.collideWorldBounds = true
 		this.player.anchor.setTo(.5,.5)
-		this.player.body.setSize(20,30)
+		// this.player.body.setSize(20,30)
+
+		// Stars
+		var emitter = this.game.add.emitter(this.game.world.centerX, 0, 200)
+		emitter.alpha = 0.8
+		emitter.width = this.game.world.width
+		emitter.makeParticles('star')
+		emitter.minParticleScale = 0.1
+		emitter.maxParticleScale = 0.5
+		emitter.setYSpeed(100, 300)
+		emitter.setXSpeed(0, 0)
+		emitter.minRotation = 0
+		emitter.maxRotation = 0
+		emitter.start(false, 7000, 100, 0)
+		emitter.gravity = 0
 
 		// Score label
 		this.score = 0
-		this.bmpText = this.game.add.bitmapText(this.game.width/2, 100, 'fontUsed', '', 150);
+		this.bmpText = this.game.add.bitmapText(this.game.width/2, 100, 'fontUsed', '', 150)
 		this.bmpText.anchor.setTo(.5,.5)
 		this.bmpText.scale.setTo(.3,.3)
 		
@@ -53,6 +60,7 @@ play.prototype = {
 		this.game.input.onDown.add(this.onDown, this)
 
 		this.pauseAndUnpause(this.game)
+
 		},
 
 	update:function()
@@ -93,9 +101,9 @@ play.prototype = {
 		obstacle.body.velocity.y = -speed
 		obstacle.has_given_point = has_given_point
 
-		obstacle.checkWorldBounds = true;
+		obstacle.checkWorldBounds = true
 		// Kill obstacle/enemy if vertically out of bounds
-		obstacle.events.onOutOfBounds.add(this.killObstacleIfHeightLessThanZero, this);
+		obstacle.events.onOutOfBounds.add(this.killObstacleIfHeightLessThanZero, this)
 	},
 
 	killObstacleIfHeightLessThanZero:function(obstacle)
@@ -110,7 +118,7 @@ play.prototype = {
 
 	killPlayer:function(player,thing)
 	{
-		this.game.plugins.screenShake.shake(20);
+		this.game.plugins.screenShake.shake(20)
 		player.kill()
 		this.game.state.start('gameOver')
 	},
@@ -166,7 +174,7 @@ play.prototype = {
 		    // Show hitbox
 		    this.game.debug.body(this.player)
 
-		    for(var i=0; i<obstacles.length;i++)
+		    for(var i=0 ;i<obstacles.length;i++)
 		    {
 		    	this.game.debug.body(obstacles[i])
 		    }

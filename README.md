@@ -1,1 +1,2 @@
-# Game Base Template - 4.0
+# Pixel Blaster
+Js Game
