@@ -143,17 +143,17 @@ play.prototype = {
 		if(enemyType == 0){
 			var img = 'enemy1'
 			var hp = 200
-			var speed = 200
+			var speed = 150
 		}
 		else if(enemyType == 1){
 			var img = 'enemy2'
 			var hp = 300
-			var speed = 300
+			var speed = 200
 		}
 		else if(enemyType == 2){
 			var img = 'enemy3'
 			var hp = 400
-			var speed = 350
+			var speed = 250
 		}
 
 		var enemy = this.enemies.create(random(w - 30), 0, img)
@@ -204,8 +204,8 @@ play.prototype = {
 	    if (this.isFiring)
 	    	this.player.body.velocity.x *= 0.5
 
-		if(this.game.input.activePointer.isDown){}
-		else{}
+		// if(this.game.input.activePointer.isDown){}
+		// else{}
 	},
 
 	pauseAndUnpause:function(game)
@@ -237,21 +237,21 @@ play.prototype = {
 			} , self)
 	},	
 
-	render:function()
-	{
-		debug = true
-		if(debug)
-		{
-		    // Show hitbox
-		    this.game.debug.body(this.player)
+	// render:function()
+	// {
+	// 	debug = false
+	// 	if(debug)
+	// 	{
+	// 	    // Show hitbox
+	// 	    this.game.debug.body(this.player)
 
 
-		    // for(var i=0  ; i<obstacles.length ; i++)
-		    // {
-		    	// this.game.debug.body(obstacles[i])
-		    // }
-		}
-	},
+	// 	    // for(var i=0  ; i<obstacles.length ; i++)
+	// 	    // {
+	// 	    	// this.game.debug.body(obstacles[i])
+	// 	    // }
+	// 	}
+	// },
 
 	scorePoint:function(obstacle){},
 
