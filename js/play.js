@@ -10,24 +10,9 @@ play.prototype = {
 		var w = this.game.width
 		var h = this.game.height
 
-		score = 0
-
-		// Score sound
-		// this.sound.score = this.game.add.audio('score')
-		// this.sound.score.volume = .4
-
-		// Death sound
-		// this.sound.kill = this.game.add.audio('kill')
-
-		// Music
-		// this.music = this.game.add.sound('music')
-		// this.music.play('', 0, 0.5, true)
-
+		this.cursor = this.game.input.keyboard.createCursorKeys()
 		this.physics.startSystem(Phaser.Physics.ARCADE)
 
-		// Obstacles
-		this.obstacles = this.game.add.group()
-		
 		// Player
 		this.player = this.game.add.sprite(this.game.width/2, h-40, 'player')
 		this.game.physics.enable(this.player, Phaser.Physics.ARCADE)
@@ -50,12 +35,60 @@ play.prototype = {
 		emitter.start(false, 7000, 100, 0)
 		emitter.gravity = 0
 
-		// Score label
+		// Enemies
+		this.enemies = this.game.add.group()
+		
+		// Explosion
+	    this.explosion = this.game.add.emitter(0, 0, 50)
+	    this.explosion.makeParticles('pixel')
+	    this.explosion.setYSpeed(-150, 150)
+		this.explosion.setXSpeed(-150, 150)
+	    this.explosion.gravity = 0
+
+	    // Powerup // Function createMultiple creates multiple instances all at once (more efficient)
+	    this.powerups = this.game.add.group()
+	    this.powerups.createMultiple(10, 'powerup')
+	    this.powerups.setAll('checkWorldBounds', true)
+	    this.powerups.setAll('outOfBoundsKill', true)
+
+	    // Enemy bullets 
+	    this.enemy_bullets = this.game.add.group()
+	    this.enemy_bullets.createMultiple(100, 'enemy_bullet')
+	    this.enemy_bullets.setAll('checkWorldBounds', true)
+	    this.enemy_bullets.setAll('outOfBoundsKill', true)
+
+	    // Player bullets
+	    this.player_bullets = this.game.add.group()
+	    this.player_bullets.createMultiple(100, 'player_bullet')
+	    this.player_bullets.setAll('checkWorldBounds', true)	
+	    this.player_bullets.setAll('outOfBoundsKill', true)	
+
+		// Score text
 		this.score = 0
 		this.bmpText = this.game.add.bitmapText(this.game.width/2, 100, 'fontUsed', '', 150)
 		this.bmpText.anchor.setTo(.5,.5)
 		this.bmpText.scale.setTo(.3,.3)
 		
+		// Sounds
+		// this.sound.score = this.game.add.audio('score')
+		// this.sound.score.volume = .4
+
+		// Death sound
+		// this.sound.kill = this.game.add.audio('kill')
+
+		// Music
+		// this.music = this.game.add.sound('music')
+		// this.music.play('', 0, 0.5, true)
+
+		// Init vars
+		this.enemyTime = this.game.time.now + 2000
+		this.fireTime = 0
+		this.bonusTime = 0
+		this.bonusType = 1
+		this.bulletTime = this.game.time.now + 5000
+		this.nextBonus = 1
+		score = 0
+
 		// Support for mouse click and touchscreen input
 		this.game.input.onDown.add(this.onDown, this)
 
@@ -68,53 +101,50 @@ play.prototype = {
 		this.bmpText.text = score
 
 		// Collision
-		this.game.physics.arcade.overlap(this.player, this.obstacles, this.killPlayer, null, this)
-
-		// Spawn enemies
-		if(this.frame_counter%90 == 0)
-		{
-			var gap = 120
-			var offset = (Math.random() < 0.5 ? -1 : 1)*Math.random()*(150)
-
-			this.spawnObstacle('obstacle', w/2 - platform_width/2 - gap/2 + offset, this.game.height, speed=200, has_given_point=false)
-			this.spawnObstacle('obstacle', w/2 + platform_width/2 + gap/2 + offset, this.game.height, speed=200, has_given_point=true)
-		}
+		this.game.physics.arcade.overlap(this.player, this.powerups, this.takePowerup, null, this)
+		this.game.physics.arcade.overlap(this.player, this.enemies, this.killPlayer, null, this)
+		this.game.physics.arcade.overlap(this.player, this.enemy_bullets, this.hitPlayer, null, this)
+		this.game.physics.arcade.overlap(this.enemies, this.player_bullets, this.hitEnemy, null, this)
 
 		this.move()
-		this.frame_counter++
 	},
 
-	spawnObstacle:function(entity,x,y,speed)
+	takePowerup:function()
 	{
-		var obstacle = this.obstacles.create(x,y,entity)
 
-		// Uncomment for debugging
-		// obstacles.push(obstacle)
-
-		this.game.physics.enable(obstacle, Phaser.Physics.ARCADE)
-
-		obstacle.enableBody = true
-		obstacle.body.colliderWorldBounds = true
-		obstacle.body.immovable = true
-		obstacle.anchor.setTo(.5,.5)
-		obstacle.scale.setTo(1,1)
-		obstacle.body.velocity.y = -speed
-		obstacle.has_given_point = has_given_point
-
-		obstacle.checkWorldBounds = true
-		// Kill obstacle/enemy if vertically out of bounds
-		obstacle.events.onOutOfBounds.add(this.killObstacleIfHeightLessThanZero, this)
 	},
 
-	killObstacleIfHeightLessThanZero:function(obstacle)
+	playerFire:function()
 	{
-		if(obstacle.body.y < 0)
-		{
-			obstacle.kill()
-		}
+
 	},
 
-	scorePoint:function(obstacle){},
+	enemyFire:function()
+	{
+
+	},
+
+	// Creates one bullet
+	oneFire:function(x,y,angle)
+	{
+
+	},
+
+	newEnemy:function()
+	{
+
+	},
+
+	hitEnemy:function()
+	{
+
+	},
+
+	hitPlayer:function()
+	{
+
+	},
+
 
 	killPlayer:function(player,thing)
 	{
@@ -123,18 +153,27 @@ play.prototype = {
 		this.game.state.start('gameOver')
 	},
 
-	// Tap on touchscreen or click with mouse
-	onDown:function(pointer){},
 
 	// Move player
 	move:function()
 	{
-		if(this.game.input.activePointer.isDown)
-		{    
-		}
-		else
-		{
-		}
+		this.player.body.velocity.x = 0
+		this.player.body.velocity.y = 0
+
+		if (this.cursor.left.isDown)
+	        this.player.body.velocity.x = -350
+	    else if (this.cursor.right.isDown)
+	        this.player.body.velocity.x = 350
+	    if (this.cursor.up.isDown)
+	        this.player.body.velocity.y = -350
+	    else if (this.cursor.down.isDown)
+	        this.player.body.velocity.y = 350
+
+	    if (this.isFiring)
+	    	this.player.body.velocity.x *= 0.5
+
+		if(this.game.input.activePointer.isDown){}
+		else{}
 	},
 
 	pauseAndUnpause:function(game)
@@ -174,11 +213,17 @@ play.prototype = {
 		    // Show hitbox
 		    this.game.debug.body(this.player)
 
-		    for(var i=0 ;i<obstacles.length;i++)
+
+		    for(var i=0  ; i<obstacles.length ; i++)
 		    {
 		    	this.game.debug.body(obstacles[i])
 		    }
 		}
 	},
+
+	scorePoint:function(obstacle){},
+
+	// Tap on touchscreen or click with mouse
+	onDown:function(pointer){},
 }
 

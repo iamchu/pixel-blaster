@@ -15,3 +15,5 @@ function main()
 	game.state.add("gameOver", gameOver)
 	game.state.start("boot")
 }
+
+function random(n){ return Math.floor(Math.random()*(n+1)) }

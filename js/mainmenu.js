@@ -12,7 +12,7 @@ mainMenu.prototype = {
 		var logo = this.game.add.bitmapText(w/2, -100, 'fontUsed', '', 75)
 		logo.text = GAMETITLE
 		logo.anchor.setTo(0.5, 0.5)
-		this.game.add.tween(logo).to({ y: h/2-80 }, 1000, Phaser.Easing.Bounce.Out).start()
+		this.game.add.tween(logo).to({ y: h/2-80 }, 1500, Phaser.Easing.Bounce.Out).start()
 
 		// Help
 		var label = this.game.add.bitmapText(w/2, h-100, 'fontUsed', '', 27);
