@@ -207,17 +207,17 @@ play.prototype = {
 
 	render:function()
 	{
-		debug = false
+		debug = true
 		if(debug)
 		{
 		    // Show hitbox
 		    this.game.debug.body(this.player)
 
 
-		    for(var i=0  ; i<obstacles.length ; i++)
-		    {
-		    	this.game.debug.body(obstacles[i])
-		    }
+		    // for(var i=0  ; i<obstacles.length ; i++)
+		    // {
+		    	// this.game.debug.body(obstacles[i])
+		    // }
 		}
 	},
 
