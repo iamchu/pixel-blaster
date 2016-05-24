@@ -175,7 +175,7 @@ play.prototype = {
 		var player_bullet = this.player_bullets.getFirstDead();
 		this.game.physics.arcade.enable(player_bullet);
 		player_bullet.anchor.setTo(0.5, 1);
-		player_bullet.body.setSize(player_bullet.width, player_bullet.height, 0, 0);
+		// player_bullet.body.setSize(player_bullet.width, player_bullet.height, 0, 0);
 		// Resets the x,y coordinates of the bullet to the given parameters
 		player_bullet.reset(x, y);
 		player_bullet.angle = angle;
@@ -215,10 +215,11 @@ play.prototype = {
 
 	hitEnemy:function(enemy,bullet)
 	{
-		bullet.alive = false
 		if (!enemy.alive) return
 
-		enemy.hp -= 10
+		bullet.kill()
+
+		enemy.hp -= 50
 
 		this.game.add.tween(enemy).to({y:enemy.y - 2}, 100).start()
 
