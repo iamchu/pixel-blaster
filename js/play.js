@@ -66,6 +66,12 @@ play.prototype = {
 	    this.player_bullets.setAll('checkWorldBounds', true)	
 	    this.player_bullets.setAll('outOfBoundsKill', true)	
 
+	    // Bullets
+	    this.bullets = this.game.add.group()
+	    this.bullets.createMultiple(100, 'player_bullet')
+	    this.bullets.setAll('checkWorldBounds', true)	
+	    this.bullets.setAll('outOfBoundsKill', true)	
+
 		// Score text
 		this.score = 0
 		this.bmpText = this.game.add.bitmapText(this.game.width/2, 100, 'fontUsed', '', 150)
@@ -86,7 +92,7 @@ play.prototype = {
 		// Init vars
 		this.fireTime = 0
 		this.bonusTime = 0
-		this.bonusType = 1
+		this.weaponType = 1
 		this.nextBonus = 1
 		this.lives = 3
 		this.bulletTime = this.game.time.now + 5000
@@ -110,12 +116,17 @@ play.prototype = {
 		this.game.physics.arcade.overlap(this.player, this.enemy_bullets, this.hitPlayer, null, this)
 		this.game.physics.arcade.overlap(this.enemies, this.player_bullets, this.hitEnemy, null, this)
 
+		// Move player
 		this.move()
+
+		// Fire if player alive
+		if(this.player.alive == true)
+			this.playerFire()
 
 		// Spawn enemy
 	   	if (this.game.time.now > this.spawnEnemyTime) 
 	   	{
-			this.spawnEnemyTime = this.game.time.now + 1000
+			this.spawnEnemyTime = this.game.time.now + 500
 	        this.newEnemy()
 	    }
 	},
@@ -125,9 +136,32 @@ play.prototype = {
 
 	},
 
+	// Add new types of weapon here
 	playerFire:function()
 	{
-
+		if (this.game.time.now < this.fireTime)
+			return
+		
+		if (this.weaponType == 1) {
+			this.fireTime = this.game.time.now + 200;
+			this.onePlayerBullet(this.player.x-10, this.player.y-this.player.height/2, 0);
+			this.onePlayerBullet(this.player.x+10, this.player.y-this.player.height/2, 0);
+		}
+		else if (this.weaponType == 2) {
+			this.fireTime = this.game.time.now + 200;
+			this.onePlayerBullet(this.player.x-5, this.player.y-this.player.height, -5);
+			this.onePlayerBullet(this.player.x, this.player.y-this.player.height, -2);
+			this.onePlayerBullet(this.player.x, this.player.y-this.player.height, 2);
+			this.onePlayerBullet(this.player.x+5, this.player.y-this.player.height, 5);
+		}
+		else if (this.weaponType == 3) {
+			this.fireTime = this.game.time.now + 20;
+			this.onePlayerBullet(this.player.x, this.player.y-this.player.height/2, random(16)-8);
+		}
+		else if (this.weaponType == 4) {
+			this.fireTime = this.game.time.now + 15;
+			this.onePlayerBullet(this.player.x, this.player.y-this.player.height/2, random(100)-50, 2);			
+		}
 	},
 
 	enemyFire:function()
@@ -136,9 +170,18 @@ play.prototype = {
 	},
 
 	// Creates one bullet
-	oneFire:function(x,y,angle)
+	// x,y is the position to spawn the bullet
+	onePlayerBullet:function(x,y,angle)
 	{
-
+		var player_bullet = this.player_bullets.getFirstDead();
+		this.game.physics.arcade.enable(player_bullet);
+		player_bullet.anchor.setTo(0.5, 1);
+		player_bullet.body.setSize(player_bullet.width, player_bullet.height, 0, 0);
+		// Resets the x,y coordinates of the bullet to the given parameters
+		player_bullet.reset(x, y);
+		player_bullet.angle = angle;
+		// -90 to correct angle (the angle is calculated mod -180)
+		this.game.physics.arcade.velocityFromAngle(player_bullet.angle-90, 500, player_bullet.body.velocity);
 	},
 
 	newEnemy:function()
@@ -171,9 +214,24 @@ play.prototype = {
 	    enemy.animations.play('move')
 	},
 
-	hitEnemy:function()
+	hitEnemy:function(enemy,bullet)
 	{
+		bullet.alive = false
+		if (!enemy.alive) return
 
+		enemy.hp -= 10
+
+		this.game.add.tween(enemy).to({y:enemy.y - 2}, 100).start()
+
+		if(enemy.hp <= 0)
+		{
+			enemy.alive = false
+			this.explosion.x = enemy.x
+			this.explosion.y = enemy.y
+			this.explosion.start(true, 1200, null, 15) // this.explosion.start(explode, lifespan, frequency, quantity, forceQuantity)
+			this.game.add.tween(enemy.scale).to({x:0, y:0}, 100).start()
+			enemy.body.velocity.y = 0
+		}
 	},
 
 	hitPlayer: function(player, enemy) {
