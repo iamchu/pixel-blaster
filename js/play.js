@@ -178,7 +178,7 @@ play.prototype = {
 
 	hitPlayer: function(player, enemy) {
 		enemy.kill()
-		
+		this.game.plugins.screenShake.shake(10)
 		this.lives -= 1
 		// this.livesLabel.text = this.lives
 		// this.bonus = 5
