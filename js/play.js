@@ -62,7 +62,7 @@ play.prototype = {
 
 	    // Player bullets
 	    this.player_bullets = this.game.add.group()
-	    this.player_bullets.createMultiple(100, 'player_bullet')
+	    this.player_bullets.createMultiple(100, 'player_bullet_long')
 	    this.player_bullets.setAll('checkWorldBounds', true)	
 	    this.player_bullets.setAll('outOfBoundsKill', true)	
 
@@ -142,22 +142,29 @@ play.prototype = {
 		if (this.game.time.now < this.fireTime)
 			return
 		
-		if (this.weaponType == 1) {
-			this.fireTime = this.game.time.now + 200;
+		if (this.weaponType == 2) {
+			this.fireTime = this.game.time.now + 100;
 			this.onePlayerBullet(this.player.x, this.player.y-this.player.height/2, 0);
 		}
-		else if (this.weaponType == 2) {
+		else if (this.weaponType == 3) {
 			this.fireTime = this.game.time.now + 200;
 			this.onePlayerBullet(this.player.x-5, this.player.y-this.player.height, -5);
 			this.onePlayerBullet(this.player.x, this.player.y-this.player.height, -2);
 			this.onePlayerBullet(this.player.x, this.player.y-this.player.height, 2);
 			this.onePlayerBullet(this.player.x+5, this.player.y-this.player.height, 5);
 		}
+		else if (this.weaponType == 4) {
+			this.fireTime = this.game.time.now + 200;
+			this.onePlayerBullet(this.player.x - 30, this.player.y-this.player.height/2, 0);
+			this.onePlayerBullet(this.player.x - 10, this.player.y-this.player.height/2, 0);
+			this.onePlayerBullet(this.player.x + 10, this.player.y-this.player.height/2,0);
+			this.onePlayerBullet(this.player.x + 30, this.player.y-this.player.height/2,0);
+		}
 		else if (this.weaponType == 3) {
 			this.fireTime = this.game.time.now + 20;
 			this.onePlayerBullet(this.player.x, this.player.y-this.player.height/2, random(16)-8);
 		}
-		else if (this.weaponType == 4) {
+		else if (this.weaponType == 1) {
 			this.fireTime = this.game.time.now + 15;
 			this.onePlayerBullet(this.player.x, this.player.y-this.player.height/2, random(100)-50, 2);			
 		}
