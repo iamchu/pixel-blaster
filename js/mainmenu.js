@@ -5,6 +5,8 @@ mainMenu.prototype = {
 
 	create:function(){
 
+		this.cursor = this.game.input.keyboard.createCursorKeys()
+
 		var w = this.game.width
 		var h = this.game.height
 
@@ -16,7 +18,7 @@ mainMenu.prototype = {
 
 		// Help
 		var label = this.game.add.bitmapText(w/2, h-100, 'fontUsed', '', 27);
-		label.text = '  use arrows or w,a,s,d \nto control the spaceship'
+		label.text = '  use arrows or w,a,s,d \nto control the spaceship \n       or start game'
 		label.anchor.setTo(0.5, 0.5)
 		label.alpha = 0
 		this.game.add.tween(label).delay(500).to({ alpha: 1}, 1000).start()
@@ -43,5 +45,11 @@ mainMenu.prototype = {
 		{
 			this.game.state.start('play')
 		}
+	},
+
+	update:function()
+	{
+		if (this.cursor.left.isDown || this.cursor.right.isDown || this.cursor.up.isDown || this.cursor.down.isDown)
+			this.game.state.start('play')
 	}
 }

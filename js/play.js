@@ -144,8 +144,7 @@ play.prototype = {
 		
 		if (this.weaponType == 1) {
 			this.fireTime = this.game.time.now + 200;
-			this.onePlayerBullet(this.player.x-10, this.player.y-this.player.height/2, 0);
-			this.onePlayerBullet(this.player.x+10, this.player.y-this.player.height/2, 0);
+			this.onePlayerBullet(this.player.x, this.player.y-this.player.height/2, 0);
 		}
 		else if (this.weaponType == 2) {
 			this.fireTime = this.game.time.now + 200;
