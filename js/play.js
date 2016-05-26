@@ -80,6 +80,9 @@ play.prototype = {
 		
 		// Sounds
 
+		this.sound.music = this.game.add.sound('music')
+		this.sound.music.volume = .3
+		this.sound.music.play('', 0, 0.5, true);
 		// Shoot sound
 		this.sound.shoot = this.game.add.sound('laser_shoot')
 		this.sound.shoot.volume = 0.01
@@ -94,6 +97,9 @@ play.prototype = {
 		// Explosion sound
 		this.sound.explosion = this.game.add.sound('explosion')
 		this.sound.explosion.volume = 0.3
+
+		this.sound.explosion_enemy = this.game.add.sound('explosion_enemy')
+		this.sound.explosion_enemy.volume = 0.3
 
 		// Init vars
 		this.fireTime = 0
@@ -185,30 +191,30 @@ play.prototype = {
 			return
 		
 		if (this.weaponType == 1) {
-			this.fireTime = this.game.time.now + 200;
-			this.onePlayerBullet(this.player.x, this.player.y-this.player.height/2, 0);
+			this.fireTime = this.game.time.now + 200
+			this.onePlayerBullet(this.player.x, this.player.y-this.player.height/2, 0)
 		}
 		else if (this.weaponType == 2) {
-			this.fireTime = this.game.time.now + 100;
-			this.onePlayerBullet(this.player.x-5, this.player.y-this.player.height/2, -5);
-			this.onePlayerBullet(this.player.x, this.player.y-this.player.height/2, -2);
-			this.onePlayerBullet(this.player.x, this.player.y-this.player.height/2, 2);
-			this.onePlayerBullet(this.player.x+5, this.player.y-this.player.height/2, 5);
+			this.fireTime = this.game.time.now + 300
+			this.onePlayerBullet(this.player.x-5, this.player.y-this.player.height/2, -5)
+			this.onePlayerBullet(this.player.x, this.player.y-this.player.height/2, -2)
+			this.onePlayerBullet(this.player.x, this.player.y-this.player.height/2, 2)
+			this.onePlayerBullet(this.player.x+5, this.player.y-this.player.height/2, 5)
 		}
 		else if (this.weaponType == 3) {
 			this.fireTime = this.game.time.now + 200;
-			this.onePlayerBullet(this.player.x - 30, this.player.y-this.player.height/2, 0);
-			this.onePlayerBullet(this.player.x - 10, this.player.y-this.player.height/2, 0);
-			this.onePlayerBullet(this.player.x + 10, this.player.y-this.player.height/2,0);
-			this.onePlayerBullet(this.player.x + 30, this.player.y-this.player.height/2,0);
+			this.onePlayerBullet(this.player.x - 30, this.player.y-this.player.height/2, 0)
+			this.onePlayerBullet(this.player.x - 10, this.player.y-this.player.height/2, 0)
+			this.onePlayerBullet(this.player.x + 10, this.player.y-this.player.height/2,0)
+			this.onePlayerBullet(this.player.x + 30, this.player.y-this.player.height/2,0)
 		}
 		else if (this.weaponType == 4) {
-			this.fireTime = this.game.time.now + 20;
-			this.onePlayerBullet(this.player.x, this.player.y-this.player.height/2, 0);
+			this.fireTime = this.game.time.now + 100
+			this.onePlayerBullet(this.player.x, this.player.y-this.player.height/2, 0)
 		}
 		else if (this.weaponType == 5) {
-			this.fireTime = this.game.time.now + 15;
-			this.onePlayerBullet(this.player.x, this.player.y-this.player.height/2, random(20)-10, 2);			
+			this.fireTime = this.game.time.now + 100
+			this.onePlayerBullet(this.player.x, this.player.y-this.player.height/2, random(20)-10, 2)			
 		}
 	},
 
@@ -272,6 +278,7 @@ play.prototype = {
 	    enemy.hp = hp
 	    enemy.animations.add('move', [0, 1], 4, true)
 	    enemy.animations.play('move')
+	    enemy.enemyType = enemyType
 	},
 
 	hitEnemy:function(enemy,bullet)
@@ -294,6 +301,7 @@ play.prototype = {
 			this.game.add.tween(enemy.scale).to({x:0, y:0}, 100).start()
 			this.game.add.tween(this.explosion).to({alpha:0}, 500).start()
 			enemy.body.velocity.y = 0
+			this.sound.explosion_enemy.play()
 			score+=100
 		}
 
