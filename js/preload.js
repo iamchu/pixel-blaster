@@ -25,11 +25,11 @@ preload.prototype = {
 		this.load.spritesheet('enemy3', 'images/alien_4.png',25,30)
 
 		// audio
-		// this.load.audio('bg_spin', 'sounds/spin_bg_music.mp3')
-		// this.load.audio('bg_edm', 'sounds/edm_bg_music.mp3')
-		// this.load.audio('score', 'sounds/score.wav')
-		// this.load.audio('kill', 'sounds/kill.ogg')
-		// this.load.audio('music', 'sounds/abstractionRapidAcrobatics.wav')
+		this.load.audio('music', 'sounds/abstractionRapidAcrobatics.wav')
+		this.load.audio('hit_enemy', 'sounds/Hit_enemy.wav')
+		this.load.audio('hit_player', 'sounds/Hit_Hurt.wav')
+		this.load.audio('laser_shoot', 'sounds/Laser_Shoot.wav')
+		this.load.audio('explosion', 'sounds/Explosion24.wav')
 
 		// font
 		this.game.load.bitmapFont('fontUsed', 'font/ganonwhite/font.png', 'font/ganonwhite/font.xml');

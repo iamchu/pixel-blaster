@@ -2,6 +2,9 @@ var gameOver = function(){}
 
 gameOver.prototype = {
 	create:function(){
+
+		this.cursor = this.game.input.keyboard.createCursorKeys()
+
 		this.game.stage.backgroundColor = BG_COLOR
 
 		var w = this.game.width
@@ -36,7 +39,7 @@ gameOver.prototype = {
 
 		// Click to try again
 		var label = this.game.add.bitmapText(w/2, h-100, 'fontUsed', '', 27);
-		label.text = 'click to try again'
+		label.text = 'move to try again'
 		label.anchor.setTo(0.5, 0.5)
 		label.alpha = 0
 		this.game.add.tween(label).delay(500).to({ alpha: 1}, 1000).start()
@@ -47,5 +50,11 @@ gameOver.prototype = {
 		{
 			this.game.state.start('play')
 		}
+	},
+
+	update:function()
+	{
+		if (this.cursor.left.isDown || this.cursor.right.isDown || this.cursor.up.isDown || this.cursor.down.isDown)
+			this.game.state.start('play')
 	}
 }

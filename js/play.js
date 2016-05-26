@@ -79,15 +79,21 @@ play.prototype = {
 		this.bmpText.scale.setTo(.3,.3)
 		
 		// Sounds
-		// this.sound.score = this.game.add.audio('score')
-		// this.sound.score.volume = .4
 
-		// Death sound
-		// this.sound.kill = this.game.add.audio('kill')
+		// Shoot sound
+		this.sound.shoot = this.game.add.sound('laser_shoot')
+		this.sound.shoot.volume = 0.01
 
-		// Music
-		// this.music = this.game.add.sound('music')
-		// this.music.play('', 0, 0.5, true)
+		// Hit sounds
+		this.sound.hit_enemy = this.game.add.sound('hit_enemy')
+		this.sound.hit_enemy.volume = 0.1
+
+		this.sound.hit_player = this.game.add.sound('hit_player')
+		this.sound.hit_player.volume = 0.1
+
+		// Explosion sound
+		this.sound.explosion = this.game.add.sound('explosion')
+		this.sound.explosion.volume = 0.3
 
 		// Init vars
 		this.fireTime = 0
@@ -188,11 +194,18 @@ play.prototype = {
 		player_bullet.angle = angle;
 		// -90 to correct angle (the angle is calculated mod -180)
 		this.game.physics.arcade.velocityFromAngle(player_bullet.angle-90, 500, player_bullet.body.velocity);
+		this.sound.shoot.play()
 	},
 
 	newEnemy:function()
 	{
 		var enemyType = random(2)
+		this.oneEnemy(enemyType)
+
+	},
+
+	oneEnemy:function(enemyType)
+	{
 		if(enemyType == 0){
 			var img = 'enemy1'
 			var hp = 200
@@ -228,7 +241,7 @@ play.prototype = {
 
 		enemy.hp -= 50
 
-		this.game.add.tween(enemy).to({y:enemy.y - 2}, 100).start()
+		this.game.add.tween(enemy).to({y:enemy.y - 10}, 100).to({y:enemy.y + 10}, 100).start()
 
 		if(enemy.hp <= 0)
 		{
@@ -241,6 +254,8 @@ play.prototype = {
 			this.game.add.tween(this.explosion).to({alpha:0}, 500).start()
 			enemy.body.velocity.y = 0
 		}
+
+		this.sound.hit_enemy.play()
 	},
 
 	hitPlayer: function(player, enemy) {
@@ -256,7 +271,8 @@ play.prototype = {
 			// Explosion and kill player
 			this.explosion.x = this.player.x
 			this.explosion.y = this.player.y-this.player.height/2
-			this.explosion.start(true, 1200, null, 50) // this.explosion.start(explode, lifespan, frequency, quantity, forceQuantity)
+			this.explosion.alpha = 1
+			this.explosion.start(true, 1200, null, 50, 100) // this.explosion.start(explode, lifespan, frequency, quantity, forceQuantity)
 			this.game.add.tween(this.explosion).to({alpha:0}, 1200).start()
 			this.player.kill()
 
@@ -264,6 +280,8 @@ play.prototype = {
 				// this.music.stop()
 				this.game.state.start('gameOver')
 			}, this)
+
+			this.sound.explosion.play() 
 		}
 
 		this.game.stage.backgroundColor = '#fff'
@@ -271,6 +289,8 @@ play.prototype = {
 		this.game.time.events.add(50, function(){
 			this.game.stage.backgroundColor = BG_COLOR
 		}, this)
+
+		this.sound.hit_player.play()
 	},
 
 
