@@ -13,6 +13,9 @@ play.prototype = {
 		this.cursor = this.game.input.keyboard.createCursorKeys()
 		this.physics.startSystem(Phaser.Physics.ARCADE)
 
+		// Volume for entire game
+		this.sound.volume = 0.1
+
 		// Player
 		this.player = this.game.add.sprite(this.game.width/2, h-40, 'player')
 		this.game.physics.enable(this.player, Phaser.Physics.ARCADE)
@@ -82,7 +85,8 @@ play.prototype = {
 
 		this.sound.music = this.game.add.sound('music')
 		this.sound.music.volume = .3
-		this.sound.music.play('', 0, 0.5, true);
+		this.sound.music.play('', 0, 0.1, true);
+
 		// Shoot sound
 		this.sound.shoot = this.game.add.sound('laser_shoot')
 		this.sound.shoot.volume = 0.01
@@ -146,7 +150,7 @@ play.prototype = {
 	    // Spawn powerup
 	    if (this.game.time.now > this.spawnPowerupTime)
 	    {
-	    	this.spawnPowerupTime = this.game.time.now + 30000
+	    	this.spawnPowerupTime = this.game.time.now + 5000
 	    	this.newPowerup()
 	    }
 	},
@@ -209,11 +213,11 @@ play.prototype = {
 			this.onePlayerBullet(this.player.x + 30, this.player.y-this.player.height/2,0)
 		}
 		else if (this.weaponType == 4) {
-			this.fireTime = this.game.time.now + 100
+			this.fireTime = this.game.time.now + 15
 			this.onePlayerBullet(this.player.x, this.player.y-this.player.height/2, 0)
 		}
 		else if (this.weaponType == 5) {
-			this.fireTime = this.game.time.now + 100
+			this.fireTime = this.game.time.now + 30
 			this.onePlayerBullet(this.player.x, this.player.y-this.player.height/2, random(20)-10, 2)			
 		}
 	},
@@ -325,13 +329,17 @@ play.prototype = {
 			this.game.add.tween(this.explosion).to({alpha:0}, 1200).start()
 			this.player.kill()
 
+			this.game.add.tween(this.sound.music).to({volume:0}, 1200).start();
+
 			this.game.time.events.add(1500, function(){
-				// this.music.stop()
+				this.sound.music.stop()
 				this.game.state.start('gameOver')
 			}, this)
 
 			this.sound.explosion.play() 
 		}
+
+
 
 		this.game.stage.backgroundColor = '#fff'
 
