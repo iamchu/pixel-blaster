@@ -13,9 +13,6 @@ play.prototype = {
 		this.cursor = this.game.input.keyboard.createCursorKeys()
 		this.physics.startSystem(Phaser.Physics.ARCADE)
 
-		// Volume for entire game
-		this.sound.volume = 0.1
-
 		// Player
 		this.player = this.game.add.sprite(this.game.width/2, h-40, 'player')
 		this.game.physics.enable(this.player, Phaser.Physics.ARCADE)
@@ -83,8 +80,10 @@ play.prototype = {
 		
 		// Sounds
 
+		// Volume for entire game
+		this.sound.volume = 1
+
 		this.sound.music = this.game.add.sound('music')
-		this.sound.music.volume = .3
 		this.sound.music.play('', 0, 0.1, true);
 
 		// Shoot sound
