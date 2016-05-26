@@ -21,7 +21,6 @@ preload.prototype = {
 		this.load.image('enemy_bullet', 'images/bullet_green_medium.png')
 		this.load.spritesheet('enemy1', 'images/alien_1_8x7_big.png',40,35)
 		this.load.spritesheet('enemy2', 'images/alien_2_10x9_big.png',50,45)
-		// this.load.spritesheet('enemy3', 'images/alien_3_12x10_big.png',60,50)
 		this.load.spritesheet('enemy3', 'images/alien_4.png',25,30)
 
 		// audio
