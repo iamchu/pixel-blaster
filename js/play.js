@@ -41,7 +41,7 @@ play.prototype = {
 		// Explosion
 	    this.explosion = this.game.add.emitter(0, 0, 50)
 	    this.explosion.makeParticles('pixel')
-	    this.explosion.alpha = 0.8
+	    this.explosion.alpha = 1
 	    this.explosion.minParticleScale = 0.1
 	    this.explosion.maxParticleScale = 0.8
 	    this.explosion.setYSpeed(-150, 150)
@@ -142,7 +142,7 @@ play.prototype = {
 		if (this.game.time.now < this.fireTime)
 			return
 		
-		if (this.weaponType == 2) {
+		if (this.weaponType == 1) {
 			this.fireTime = this.game.time.now + 100;
 			this.onePlayerBullet(this.player.x, this.player.y-this.player.height/2, 0);
 		}
@@ -164,7 +164,7 @@ play.prototype = {
 			this.fireTime = this.game.time.now + 20;
 			this.onePlayerBullet(this.player.x, this.player.y-this.player.height/2, random(16)-8);
 		}
-		else if (this.weaponType == 1) {
+		else if (this.weaponType == 5) {
 			this.fireTime = this.game.time.now + 15;
 			this.onePlayerBullet(this.player.x, this.player.y-this.player.height/2, random(100)-50, 2);			
 		}
@@ -235,8 +235,10 @@ play.prototype = {
 			enemy.alive = false
 			this.explosion.x = enemy.x
 			this.explosion.y = enemy.y
-			this.explosion.start(true, 1200, null, 15) // this.explosion.start(explode, lifespan, frequency, quantity, forceQuantity)
+			this.explosion.alpha = 1
+			this.explosion.start(true, 500, null, 15) // this.explosion.start(explode, lifespan, frequency, quantity, forceQuantity)
 			this.game.add.tween(enemy.scale).to({x:0, y:0}, 100).start()
+			this.game.add.tween(this.explosion).to({alpha:0}, 500).start()
 			enemy.body.velocity.y = 0
 		}
 	},

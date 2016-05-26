@@ -5,10 +5,10 @@ preload.prototype = {
 
 		this.game.stage.backgroundColor = BG_COLOR
 
-		var loading_border = this.add.image(this.game.width/2,this.game.height/2,'loading_border')
-		loading_border.anchor.setTo(.5,.5)
 		var loading = this.add.sprite(this.game.width/2,this.game.height/2,'loading')
 		loading.anchor.setTo(.5,.5)
+		var loading_border = this.add.image(this.game.width/2,this.game.height/2,'loading_border')
+		loading_border.anchor.setTo(.5,.5)
 		this.load.setPreloadSprite(loading)
 		
 		this.load.image('star', 'images/star.png')
