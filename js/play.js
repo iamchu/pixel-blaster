@@ -245,7 +245,7 @@ play.prototype = {
 
 	newEnemy:function()
 	{
-		var enemyType = random(2)
+		var enemyType = random(3)
 		this.oneEnemy(enemyType)
 	},
 
@@ -271,6 +271,11 @@ play.prototype = {
 			var hp = 10
 			var speed = 250
 		}
+		else if(enemyType == 3){
+			var img = 'enemy4'
+			var hp = 500
+			var speed = 250
+		}
 
 		var enemy = this.enemies.create(random(w - 30), 0, img)
 		this.game.physics.arcade.enable(enemy)
@@ -280,6 +285,10 @@ play.prototype = {
 	    enemy.body.velocity.y = speed
 	    enemy.hp = hp
 	    enemy.animations.add('move', [0, 1], 4, true)
+	    if(enemyType == 3)
+    	{
+		    enemy.animations.add('move', [0, 2], 4, true)
+    	}
 	    enemy.animations.play('move')
 	    enemy.enemyType = enemyType
 	},
