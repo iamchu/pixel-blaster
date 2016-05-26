@@ -243,7 +243,6 @@ play.prototype = {
 	{
 		var enemyType = random(2)
 		this.oneEnemy(enemyType)
-
 	},
 
 	spawnEnemyGroup:function()
@@ -260,12 +259,12 @@ play.prototype = {
 		}
 		else if(enemyType == 1){
 			var img = 'enemy2'
-			var hp = 300
+			var hp = 400
 			var speed = 200
 		}
 		else if(enemyType == 2){
 			var img = 'enemy3'
-			var hp = 400
+			var hp = 10
 			var speed = 250
 		}
 
