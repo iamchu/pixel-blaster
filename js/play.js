@@ -13,6 +13,10 @@ play.prototype = {
 		this.cursor = this.game.input.keyboard.createCursorKeys()
 		this.physics.startSystem(Phaser.Physics.ARCADE)
 
+		// Support for mouse click and touchscreen input
+		this.game.input.onDown.add(this.onDown, this)
+		this.pauseAndUnpause(this.game)
+
 		// Player
 		this.player = this.game.add.sprite(this.game.width/2, h-40, 'player')
 		this.game.physics.enable(this.player, Phaser.Physics.ARCADE)
@@ -114,15 +118,10 @@ play.prototype = {
 		this.spawnEnemyTime = this.game.time.now + 2000
 		this.spawnPowerupTime = this.game.time.now + 500
 		this.spawnEnemyGroupTime = this.game.time.now + 500
+		this.enemyFiringTime = this.game.time.now + 1500
 		ENEMIES_ARRAY = []
 		score = 0
-
-		// Support for mouse click and touchscreen input
-		this.game.input.onDown.add(this.onDown, this)
-
-		this.pauseAndUnpause(this.game)
-
-		},
+	},
 
 	update:function()
 	{
@@ -145,16 +144,22 @@ play.prototype = {
 	   	if (this.game.time.now > this.spawnEnemyTime) 
 	   	{
 			this.spawnEnemyTime = this.game.time.now + 1000
-			this.enemyFire(100,3)
-	        this.newEnemy(2)
+	        this.newEnemy(random(2))
 	    }
 
     	// Spawn enemy group
        	if (this.game.time.now > this.spawnEnemyGroupTime) 
        	{
-    		this.spawnEnemyGroupTime = this.game.time.now + 2000
+    		this.spawnEnemyGroupTime = this.game.time.now + 10000
             this.spawnEnemyGroup(3)
         }
+
+	    // Enemies fire
+	    if (this.game.time.now > this.enemyFiringTime)
+	    {
+	    	this.enemyFiringTime = this.game.time.now + 3000
+			this.enemyFire(3, undefined, 100)
+	    }
 
 	    // Spawn powerup
 	    if (this.game.time.now > this.spawnPowerupTime)
@@ -231,7 +236,7 @@ play.prototype = {
 		}
 	},
 
-	enemyFire:function(bullet_speed, enemy_type_to_fire)
+	enemyFire:function(enemy_type_to_fire, angle, bullet_speed)
 	{
 		ENEMIES_ARRAY.length = 0
 
@@ -243,12 +248,12 @@ play.prototype = {
 		{
 			if(ENEMIES_ARRAY[i].enemyType == enemy_type_to_fire)
 			{
-				this.oneEnemyBullet(ENEMIES_ARRAY[i].body.x + ENEMIES_ARRAY[i].width/2,ENEMIES_ARRAY[i].body.y + ENEMIES_ARRAY[i].height,0,300)
+				this.oneEnemyBullet(ENEMIES_ARRAY[i].body.x + ENEMIES_ARRAY[i].width/2,ENEMIES_ARRAY[i].body.y + ENEMIES_ARRAY[i].height,angle,bullet_speed)
 			}
 		}
 	},
 
-	oneEnemyBullet:function(x,y,angle=0,bullet_speed)
+	oneEnemyBullet:function(x,y,angle=random(30)-15,bullet_speed)
 	{
 		var enemy_bullet = this.enemy_bullets.getFirstDead();
 		this.game.physics.arcade.enable(enemy_bullet);
