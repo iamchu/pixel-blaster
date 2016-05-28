@@ -78,14 +78,14 @@ play.prototype = {
 
 		// Score text
 		this.score = 0
-		this.bmpText = this.game.add.bitmapText(this.game.width/2, 100, 'fontUsed', '', 150)
-		this.bmpText.anchor.setTo(.5,.5)
+		this.bmpText = this.game.add.bitmapText(20, 5, 'fontUsed', '', 100)
+		this.bmpText.anchor.setTo(.5,0)
 		this.bmpText.scale.setTo(.3,.3)
 		
 		// Sounds
 
 		// Volume for entire game
-		this.sound.volume = .3
+		this.sound.volume = .7
 
 		this.sound.music = this.game.add.sound('music')
 		this.sound.music.play('', 0, 0.1, true);
@@ -341,7 +341,7 @@ play.prototype = {
 
 		bullet.kill()
 
-		enemy.hp -= 25*this.player.power_level
+		enemy.hp -= 50
 
 		this.game.add.tween(enemy).to({y:enemy.y - 10}, 100).to({y:enemy.y + 10}, 100).start()
 
