@@ -109,18 +109,18 @@ play.prototype = {
 		this.sound.explosion_enemy.volume = 0.3
 
 		// Init vars
+		score = 0
+		ENEMIES_ARRAY = []
+		this.lives = 3
 		this.fireTime = 0
 		this.bonusTime = 0
-		this.weaponType = 1
 		this.nextBonus = 1
-		this.lives = 3
+		this.player.power_level = 1
 		this.bulletTime = this.game.time.now + 5000
 		this.spawnEnemyTime = this.game.time.now + 2000
 		this.spawnPowerupTime = this.game.time.now + 500
-		this.spawnEnemyGroupTime = this.game.time.now + 500
+		this.spawnEnemyGroupTime = this.game.time.now + 10000
 		this.enemyFiringTime = this.game.time.now + 1500
-		ENEMIES_ARRAY = []
-		score = 0
 	},
 
 	update:function()
@@ -157,7 +157,7 @@ play.prototype = {
 	    // Enemies fire
 	    if (this.game.time.now > this.enemyFiringTime)
 	    {
-	    	this.enemyFiringTime = this.game.time.now + 3000
+	    	this.enemyFiringTime = this.game.time.now + 3000 - score/100
 			this.enemyFire(3, undefined, 100)
 	    }
 
@@ -173,7 +173,7 @@ play.prototype = {
 	{
 		if (!powerup.alive) return
 
-		this.weaponType = powerup.powerupType
+		this.player.power_level++
 
 		powerup.alive = false
 		powerup.body.velocity.y = 0
@@ -182,15 +182,8 @@ play.prototype = {
 
 	newPowerup:function()
 	{
-		var powerupType = 2 + random(3)
-		if(powerupType == 2)
-		{
-			var img = 'powerup'
-		}
-		else
-		{
-			var img = 'powerup'
-		}
+
+		var img = 'powerup'
 
 		var powerup = this.powerups.create(random(w - 30), 0, img)
 		this.game.physics.arcade.enable(powerup)
@@ -198,8 +191,9 @@ play.prototype = {
 	    powerup.outOfBoundsKill = true
 	    powerup.anchor.setTo(0.5, 0.5)
 	    powerup.body.velocity.y = 200
-	    powerup.powerupType = powerupType
 	    powerup.body.angularVelocity = 50;
+	    powerup.animations.add('shine', [0,3], 2, true)
+	    powerup.animations.play('shine')
 	},
 
 	// Add new types of weapon here
@@ -208,29 +202,36 @@ play.prototype = {
 		if (this.game.time.now < this.fireTime)
 			return
 		
-		if (this.weaponType == 1) {
+		if (this.player.power_level == 1) {
 			this.fireTime = this.game.time.now + 200
 			this.onePlayerBullet(this.player.x, this.player.y-this.player.height/2, 0)
 		}
-		else if (this.weaponType == 2) {
-			this.fireTime = this.game.time.now + 300
-			this.onePlayerBullet(this.player.x-5, this.player.y-this.player.height/2, -5)
-			this.onePlayerBullet(this.player.x, this.player.y-this.player.height/2, -2)
-			this.onePlayerBullet(this.player.x, this.player.y-this.player.height/2, 2)
-			this.onePlayerBullet(this.player.x+5, this.player.y-this.player.height/2, 5)
+		else if (this.player.power_level == 2) {
+			this.fireTime = this.game.time.now + 200;
+			this.onePlayerBullet(this.player.x - 10, this.player.y-this.player.height/2, 0)
+			this.onePlayerBullet(this.player.x + 10, this.player.y-this.player.height/2,0)
 		}
-		else if (this.weaponType == 3) {
+		else if (this.player.power_level == 3) {
 			this.fireTime = this.game.time.now + 200;
 			this.onePlayerBullet(this.player.x - 30, this.player.y-this.player.height/2, 0)
 			this.onePlayerBullet(this.player.x - 10, this.player.y-this.player.height/2, 0)
 			this.onePlayerBullet(this.player.x + 10, this.player.y-this.player.height/2,0)
 			this.onePlayerBullet(this.player.x + 30, this.player.y-this.player.height/2,0)
 		}
-		else if (this.weaponType == 4) {
+		else if (this.player.power_level == 4) {
+			this.fireTime = this.game.time.now + 200;
+			this.onePlayerBullet(this.player.x - 50, this.player.y-this.player.height/2, 0)
+			this.onePlayerBullet(this.player.x - 30, this.player.y-this.player.height/2, 0)
+			this.onePlayerBullet(this.player.x - 10, this.player.y-this.player.height/2, 0)
+			this.onePlayerBullet(this.player.x + 10, this.player.y-this.player.height/2,0)
+			this.onePlayerBullet(this.player.x + 30, this.player.y-this.player.height/2,0)
+			this.onePlayerBullet(this.player.x + 50, this.player.y-this.player.height/2,0)
+		}
+		else if (this.player.power_level == 5) {
 			this.fireTime = this.game.time.now + 15
 			this.onePlayerBullet(this.player.x, this.player.y-this.player.height/2, 0)
 		}
-		else if (this.weaponType == 5) {
+		else if (this.player.power_level == 6) {
 			this.fireTime = this.game.time.now + 30
 			this.onePlayerBullet(this.player.x, this.player.y-this.player.height/2, random(20)-10, 2)			
 		}
@@ -340,7 +341,7 @@ play.prototype = {
 
 		bullet.kill()
 
-		enemy.hp -= 50
+		enemy.hp -= 25*this.player.power_level
 
 		this.game.add.tween(enemy).to({y:enemy.y - 10}, 100).to({y:enemy.y + 10}, 100).start()
 
