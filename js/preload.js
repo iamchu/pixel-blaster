@@ -17,7 +17,8 @@ preload.prototype = {
 		this.load.image('player', 'images/simple_ship_2.png')
 		// this.load.image('player_bullet_long', 'images/bullet.png')
 		this.load.image('player_bullet_long', 'images/long_beam.png')
-		this.load.image('enemy_bullet', 'images/bullet_green_medium.png')
+		this.load.image('enemy_bullet', 'images/bullet_green_small.png')
+		this.load.image('enemy_bullet_long', 'images/bullet_green_medium.png')
 		this.load.spritesheet('powerup', 'images/powerup_green.png',22,22) // 4 frames
 		this.load.spritesheet('powerup_mega', 'images/powerup.png',22,22) // 6 frames
 		this.load.spritesheet('enemy1', 'images/alien_1_8x7_big.png',40,35)

@@ -76,11 +76,13 @@ play.prototype = {
 	    this.bullets.setAll('checkWorldBounds', true)	
 	    this.bullets.setAll('outOfBoundsKill', true)	
 
+		// Lives text
+		this.bmpText_lives = this.game.add.bitmapText(w/2-100, 5, 'fontUsed', '', 25)
+		this.bmpText_lives.anchor.setTo(0,0)
+
 		// Score text
-		this.score = 0
-		this.bmpText = this.game.add.bitmapText(20, 5, 'fontUsed', '', 100)
-		this.bmpText.anchor.setTo(.5,0)
-		this.bmpText.scale.setTo(.3,.3)
+		this.bmpText_score = this.game.add.bitmapText(w/2+35, 5, 'fontUsed', '', 25)
+		this.bmpText_score.anchor.setTo(0,0)
 		
 		// Sounds
 
@@ -88,11 +90,11 @@ play.prototype = {
 		this.sound.volume = .7
 
 		this.sound.music = this.game.add.sound('music')
-		this.sound.music.play('', 0, 0.1, true);
+		this.sound.music.play('', 0, 0.3, true);
 
 		// Shoot sound
 		this.sound.shoot = this.game.add.sound('laser_shoot')
-		this.sound.shoot.volume = 0.01
+		this.sound.shoot.volume = 0.1
 
 		// Hit sounds
 		this.sound.hit_enemy = this.game.add.sound('hit_enemy')
@@ -103,15 +105,15 @@ play.prototype = {
 
 		// Explosion sound
 		this.sound.explosion = this.game.add.sound('explosion')
-		this.sound.explosion.volume = 0.3
+		this.sound.explosion.volume = 0.1
 
 		this.sound.explosion_enemy = this.game.add.sound('explosion_enemy')
-		this.sound.explosion_enemy.volume = 0.3
+		this.sound.explosion_enemy.volume = 0.1
 
 		// Init vars
 		score = 0
 		ENEMIES_ARRAY = []
-		this.lives = 3
+		this.player_lives = 3
 		this.fireTime = 0
 		this.bonusTime = 0
 		this.nextBonus = 1
@@ -125,7 +127,8 @@ play.prototype = {
 
 	update:function()
 	{
-		this.bmpText.text = score
+		this.bmpText_score.text = 'SCORE: ' + score
+		this.bmpText_lives.text = 'LIVES: ' + this.player_lives
 
 		// Collision
 		this.game.physics.arcade.overlap(this.player, this.powerups, this.takePowerup, null, this)
@@ -157,7 +160,7 @@ play.prototype = {
 	    // Enemies fire
 	    if (this.game.time.now > this.enemyFiringTime)
 	    {
-	    	this.enemyFiringTime = this.game.time.now + 3000 - score/100
+	    	this.enemyFiringTime = this.game.time.now + 750 + 3000 - (score < 30000 ? score/10 : 3000) 
 			this.enemyFire(3, undefined, 100)
 	    }
 
@@ -173,6 +176,7 @@ play.prototype = {
 	{
 		if (!powerup.alive) return
 
+		score += 100*this.player.power_level
 		this.player.power_level++
 
 		powerup.alive = false
@@ -235,6 +239,17 @@ play.prototype = {
 			this.fireTime = this.game.time.now + 30
 			this.onePlayerBullet(this.player.x, this.player.y-this.player.height/2, random(20)-10, 2)			
 		}
+		else if (this.player.power_level > 6) {
+			this.fireTime = this.game.time.now + 200;
+			this.onePlayerBullet(this.player.x - 70, this.player.y-this.player.height/2, 0)
+			this.onePlayerBullet(this.player.x - 50, this.player.y-this.player.height/2, 0)
+			this.onePlayerBullet(this.player.x - 30, this.player.y-this.player.height/2, 0)
+			this.onePlayerBullet(this.player.x - 10, this.player.y-this.player.height/2, 0)
+			this.onePlayerBullet(this.player.x + 10, this.player.y-this.player.height/2,0)
+			this.onePlayerBullet(this.player.x + 30, this.player.y-this.player.height/2,0)
+			this.onePlayerBullet(this.player.x + 50, this.player.y-this.player.height/2,0)
+			this.onePlayerBullet(this.player.x + 70, this.player.y-this.player.height/2,0)
+		}
 	},
 
 	enemyFire:function(enemy_type_to_fire, angle, bullet_speed)
@@ -256,12 +271,14 @@ play.prototype = {
 
 	oneEnemyBullet:function(x,y,angle=random(30)-15,bullet_speed)
 	{
-		var enemy_bullet = this.enemy_bullets.getFirstDead();
-		this.game.physics.arcade.enable(enemy_bullet);
-		enemy_bullet.anchor.setTo(0.5, 1);
-		enemy_bullet.reset(x, y);
-		enemy_bullet.angle = angle;
-		this.game.physics.arcade.velocityFromAngle(enemy_bullet.angle-90, -bullet_speed, enemy_bullet.body.velocity);
+		var enemy_bullet = this.enemy_bullets.getFirstDead()
+		this.game.physics.arcade.enable(enemy_bullet)
+		enemy_bullet.anchor.setTo(0.5, 1)
+		enemy_bullet.reset(x, y)
+		enemy_bullet.angle = angle
+		// If enemy under player, shoot up
+		bullet_speed = -bullet_speed*(enemy_bullet.body.y > this.player.body.y ? -1:1)
+		this.game.physics.arcade.velocityFromAngle(enemy_bullet.angle-90, bullet_speed, enemy_bullet.body.velocity)
 		this.sound.shoot.play()
 	},
 
@@ -296,25 +313,28 @@ play.prototype = {
 
 	oneEnemy:function(enemyType, x, y)
 	{
+
+		var speed_amplifier = (score < 10000 ? score/100 : 100)
+
 		if(enemyType == 0){
 			var img = 'enemy1'
 			var hp = 200
-			var speed = 100
+			var speed = 100 
 		}
 		else if(enemyType == 1){
 			var img = 'enemy2'
 			var hp = 400
-			var speed = 75
+			var speed = 75 
 		}
 		else if(enemyType == 2){
 			var img = 'enemy3'
 			var hp = 10
-			var speed = 250
+			var speed = 250 
 		}
 		else if(enemyType == 3){
 			var img = 'enemy4'
 			var hp = 500
-			var speed = 0
+			var speed = 25  
 		}
 
 		var enemy = this.enemies.create(x, y, img)
@@ -322,15 +342,17 @@ play.prototype = {
  		enemy.checkWorldBounds = true
 	    enemy.outOfBoundsKill = true
 	    enemy.anchor.setTo(0.5, 0.5)
-	    enemy.body.velocity.y = speed
+	    enemy.body.velocity.y = speed + speed_amplifier
 	    enemy.hp = hp
 	    enemy.enemyType = enemyType
 	    enemy.animations.add('move', [0, 1], 4, true)
+
 	    if(enemyType == 3)
     	{
 		    enemy.animations.add('move', [0, 2], 4, true)
 		    this.game.add.tween(enemy).to({y:100}, 200).start()
     	}
+
 	    enemy.animations.play('move')
 	    enemy.enemyType = enemyType
 	},
@@ -363,13 +385,16 @@ play.prototype = {
 	},
 
 	hitPlayer: function(player, enemy) {
+
+		this.player.power_level = 1
+
 		enemy.kill()
 		this.game.plugins.screenShake.shake(10)
-		this.lives -= 1
-		// this.livesLabel.text = this.lives
+		this.player_lives -= 1
+		// this.player_livesLabel.text = this.player_lives
 		// this.bonus = 5
 
-		if (this.lives == 0) 
+		if (this.player_lives == 0) 
 		{
 			this.player.alive = false
 			// Explosion and kill player
@@ -389,8 +414,6 @@ play.prototype = {
 
 			this.sound.explosion.play() 
 		}
-
-
 
 		this.game.stage.backgroundColor = '#fff'
 
