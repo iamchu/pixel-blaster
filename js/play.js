@@ -81,7 +81,7 @@ play.prototype = {
 		// Sounds
 
 		// Volume for entire game
-		this.sound.volume = 1
+		this.sound.volume = .3
 
 		this.sound.music = this.game.add.sound('music')
 		this.sound.music.play('', 0, 0.1, true);
@@ -113,6 +113,8 @@ play.prototype = {
 		this.bulletTime = this.game.time.now + 5000
 		this.spawnEnemyTime = this.game.time.now + 2000
 		this.spawnPowerupTime = this.game.time.now + 500
+		this.spawnEnemyGroupTime = this.game.time.now + 500
+		ENEMIES_ARRAY = []
 		score = 0
 
 		// Support for mouse click and touchscreen input
@@ -142,9 +144,17 @@ play.prototype = {
 		// Spawn enemy
 	   	if (this.game.time.now > this.spawnEnemyTime) 
 	   	{
-			this.spawnEnemyTime = this.game.time.now + 500
-	        this.newEnemy()
+			this.spawnEnemyTime = this.game.time.now + 1000
+			this.enemyFire(100,3)
+	        this.newEnemy(2)
 	    }
+
+    	// Spawn enemy group
+       	if (this.game.time.now > this.spawnEnemyGroupTime) 
+       	{
+    		this.spawnEnemyGroupTime = this.game.time.now + 2000
+            this.spawnEnemyGroup(3)
+        }
 
 	    // Spawn powerup
 	    if (this.game.time.now > this.spawnPowerupTime)
@@ -167,7 +177,7 @@ play.prototype = {
 
 	newPowerup:function()
 	{
-		var powerupType = 2+random(3)
+		var powerupType = 2 + random(3)
 		if(powerupType == 2)
 		{
 			var img = 'powerup'
@@ -221,9 +231,32 @@ play.prototype = {
 		}
 	},
 
-	enemyFire:function()
+	enemyFire:function(bullet_speed, enemy_type_to_fire)
 	{
+		ENEMIES_ARRAY.length = 0
 
+		this.enemies.forEachAlive(function(enemy){
+			ENEMIES_ARRAY.push(enemy)
+		})
+
+		for(var i=0; i<ENEMIES_ARRAY.length; i++)
+		{
+			if(ENEMIES_ARRAY[i].enemyType == enemy_type_to_fire)
+			{
+				this.oneEnemyBullet(ENEMIES_ARRAY[i].body.x + ENEMIES_ARRAY[i].width/2,ENEMIES_ARRAY[i].body.y + ENEMIES_ARRAY[i].height,0,300)
+			}
+		}
+	},
+
+	oneEnemyBullet:function(x,y,angle=0,bullet_speed)
+	{
+		var enemy_bullet = this.enemy_bullets.getFirstDead();
+		this.game.physics.arcade.enable(enemy_bullet);
+		enemy_bullet.anchor.setTo(0.5, 1);
+		enemy_bullet.reset(x, y);
+		enemy_bullet.angle = angle;
+		this.game.physics.arcade.velocityFromAngle(enemy_bullet.angle-90, -bullet_speed, enemy_bullet.body.velocity);
+		this.sound.shoot.play()
 	},
 
 	// Creates one bullet
@@ -232,7 +265,7 @@ play.prototype = {
 	{
 		var player_bullet = this.player_bullets.getFirstDead();
 		this.game.physics.arcade.enable(player_bullet);
-		player_bullet.anchor.setTo(0.5, 1);
+		player_bullet.anchor.setTo(0.5, 0.5);
 		// player_bullet.body.setSize(player_bullet.width, player_bullet.height, 0, 0);
 		// Resets the x,y coordinates of the bullet to the given parameters
 		player_bullet.reset(x, y);
@@ -242,28 +275,30 @@ play.prototype = {
 		this.sound.shoot.play()
 	},
 
-	newEnemy:function()
+	newEnemy:function(enemyType=random(3))
 	{
-		var enemyType = random(3)
-		this.oneEnemy(enemyType)
+		this.oneEnemy(enemyType,random(w - 30), 0)
 	},
 
-	spawnEnemyGroup:function()
+	spawnEnemyGroup:function(enemyType = random(3))
 	{
-
+		for(var i=0; i<5; i++)
+		{
+			this.oneEnemy(enemyType, w/2 - 80*4/2 + 80*i, 0)
+		}
 	},
 
-	oneEnemy:function(enemyType)
+	oneEnemy:function(enemyType, x, y)
 	{
 		if(enemyType == 0){
 			var img = 'enemy1'
 			var hp = 200
-			var speed = 150
+			var speed = 100
 		}
 		else if(enemyType == 1){
 			var img = 'enemy2'
 			var hp = 400
-			var speed = 200
+			var speed = 75
 		}
 		else if(enemyType == 2){
 			var img = 'enemy3'
@@ -273,20 +308,22 @@ play.prototype = {
 		else if(enemyType == 3){
 			var img = 'enemy4'
 			var hp = 500
-			var speed = 250
+			var speed = 0
 		}
 
-		var enemy = this.enemies.create(random(w - 30), 0, img)
+		var enemy = this.enemies.create(x, y, img)
 		this.game.physics.arcade.enable(enemy)
  		enemy.checkWorldBounds = true
 	    enemy.outOfBoundsKill = true
 	    enemy.anchor.setTo(0.5, 0.5)
 	    enemy.body.velocity.y = speed
 	    enemy.hp = hp
+	    enemy.enemyType = enemyType
 	    enemy.animations.add('move', [0, 1], 4, true)
 	    if(enemyType == 3)
     	{
 		    enemy.animations.add('move', [0, 2], 4, true)
+		    this.game.add.tween(enemy).to({y:100}, 200).start()
     	}
 	    enemy.animations.play('move')
 	    enemy.enemyType = enemyType
