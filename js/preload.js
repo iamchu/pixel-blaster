@@ -35,7 +35,7 @@ preload.prototype = {
 		this.load.audio('explosion_enemy', 'sounds/Explosion3.wav')
 
 		// font
-		this.game.load.bitmapFont('fontUsed', 'font/ganonwhite/font.png', 'font/ganonwhite/font.xml');
+		this.game.load.bitmapFont('fontUsed', 'font/ganonwhite/font.png', 'font/ganonwhite/font.xml')
 
 	},
 	
